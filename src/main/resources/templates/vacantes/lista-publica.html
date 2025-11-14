@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/springsecurity6">
+<head>
+    <title>Lista de Vacantes</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style th:replace="~{fragments/navbar :: nav-styles}"></style>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+        :root {
+            --primary-color: #00a4a4;
+            --background-color: #16161a;
+            --container-background: #242629;
+            --card-background: #2a2c2f;
+            --text-color: #fffffe;
+            --success-color: #2cb67d;
+            --danger-color: #ff5c5c;
+        }
+
+        /* 3. Añadimos padding-top */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            padding-top: 80px; /* 60px navbar + 20px padding */
+        }
+        .container {
+            background-color: var(--container-background); padding: 40px; border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); width: 100%; max-width: 960px; margin: 20px auto;
+        }
+        h1 { color: var(--primary-color); margin-bottom: 25px; font-weight: 600; text-align: center; }
+        .card { background-color: var(--card-background); padding: 25px; border-radius: 8px; margin-bottom: 20px; }
+        .card h2 { color: var(--primary-color); margin-top: 0; margin-bottom: 15px; }
+        .btn {
+            background-color: var(--primary-color); color: white; padding: 10px 18px; border: none;
+            border-radius: 25px; cursor: pointer; font-size: 14px; font-weight: 600;
+            text-decoration: none; display: inline-block; transition: transform 0.2s;
+        }
+        .btn:hover { transform: scale(1.05); }
+        .alert { padding: 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid transparent; }
+        .alert-success { background-color: rgba(44, 182, 125, 0.1); color: var(--success-color); border-color: var(--success-color); }
+        .alert-danger { background-color: rgba(255, 92, 92, 0.1); color: var(--danger-color); border-color: var(--danger-color); }
+        input[type="file"] { color: #94a1b2; margin-right: 15px; }
+        input[type="file"]::file-selector-button {
+            margin-right: 15px; border: none; background: var(--primary-color); padding: 8px 12px;
+            border-radius: 20px; color: #fff; cursor: pointer; transition: background .2s ease-in-out;
+        }
+        input[type="file"]::file-selector-button:hover { background: #008a8a; }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{fragments/navbar :: nav}"></div>
+
+<div class="container">
+    <h1>Vacantes Disponibles</h1>
+
+    <div th:if="${msg_exito}" class="alert alert-success" th:text="${msg_exito}"></div>
+    <div th:if="${msg_error}" class="alert alert-danger" th:text="${msg_error}"></div>
+
+    <div th:each="vacante : ${vacantes}" class="card">
+        <h2 th:text="${vacante.titulo}">Título de la Vacante</h2>
+        <p><strong>Empresa:</strong> <span th:text="${vacante.empleador.empresa}"></span></p>
+        <p><strong>Ubicación:</strong> <span th:text="${vacante.ubicacion}"></span></p>
+        <p><strong>Salario:</strong> <span th:text="${vacante.salario}"></span></p>
+        <p th:text="${#strings.abbreviate(vacante.descripcion, 150)}">Descripción corta...</p>
+
+        <form th:if="${#authorization.expression('hasAuthority(''ROLE_PROGRAMADOR'')')}"
+              th:action="@{/vacantes/{id}/postular(id=${vacante.id})}"
+              method="post" enctype="multipart/form-data" style="margin-top: 20px;">
+
+            <label for="cv" style="margin-right: 10px;">Sube tu CV (PDF):</label>
+            <input type="file" name="cv" accept=".pdf" required>
+            <button type="submit" class="btn">Postularme</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

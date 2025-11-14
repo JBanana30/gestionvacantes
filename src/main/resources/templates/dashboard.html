@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/springsecurity6">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+
+    <style th:replace="~{fragments/navbar :: nav-styles}"></style>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+        :root {
+            --primary-color: #00a4a4; /* Turquesa */
+            --secondary-color: #FF6B6B; /* Rojo coral (ahora en la navbar) */
+            --background-color: #1a1a1d; /* Fondo oscuro casi negro */
+            --card-background: #2c2f33; /* Gris oscuro para tarjetas */
+            --text-color: #f4f4f4; /* Texto blanco */
+            --text-muted: #99aab5; /* Texto gris claro */
+            --border-radius: 8px;
+            --box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        /* 3. Añadimos padding-top para que la navbar no tape el contenido */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 40px;
+            padding-top: 100px; /* 60px navbar + 40px padding original */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Alineamos arriba */
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+        .dashboard-card {
+            background-color: var(--card-background);
+            padding: 35px 40px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            width: 100%;
+            max-width: 700px; /* Un poco más ancho para los botones */
+            text-align: center;
+        }
+        .welcome-header {
+            border-bottom: 1px solid var(--primary-color);
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+        }
+        .welcome-header h2 {
+            color: var(--primary-color);
+            margin: 0;
+            font-weight: 600;
+            font-size: 2em;
+        }
+        .profile-section {
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+        .profile-section h3 {
+            margin-top: 0;
+            color: var(--text-muted);
+            font-weight: 400;
+            border-bottom: 1px solid var(--text-muted);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 1.2em;
+        }
+        .profile-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 1.0em;
+            line-height: 1.5;
+        }
+        .profile-item strong {
+             color: var(--text-muted);
+             margin-right: 15px;
+             flex-shrink: 0;
+        }
+        .profile-item span {
+            text-align: right;
+            word-break: break-word;
+        }
+
+        /* 4. CAMBIO EN EL LAYOUT DE BOTONES */
+        .actions-section {
+            display: flex;
+            flex-direction: row; /* <-- AQUÍ EL CAMBIO */
+            flex-wrap: wrap; /* Por si no caben */
+            gap: 20px; /* Espacio entre botones */
+            justify-content: center;
+        }
+
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 14px 20px; /* Ajuste de padding */
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.95em; /* Ligeramente más pequeño */
+            font-weight: 600;
+            text-decoration: none;
+            transition: transform 0.2s, background-color 0.2s;
+            box-sizing: border-box;
+            text-align: center;
+            /* 5. CAMBIO DE LAYOUT */
+            flex: 1;
+            min-width: 200px; /* Ancho mínimo por botón */
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            background-color: #008a8a;
+        }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{fragments/navbar :: nav}"></div>
+
+<div class="dashboard-card">
+    <div class="welcome-header">
+        <h2 th:text="${mensaje}">¡Bienvenido!</h2>
+    </div>
+
+    <div class="profile-section" th:if="${perfil}">
+        <h3>Tu Información</h3>
+        <div class="profile-item"><strong>Nombre:</strong> <span th:text="${perfil.nombreCompleto}"></span></div>
+        <div class="profile-item" th:if="${tipoUsuario == 'Empleador'}"><strong>Empresa:</strong> <span th:text="${perfil.empresa}"></span></div>
+        <div class="profile-item" th:if="${tipoUsuario == 'Aspirante'}"><strong>Usuario:</strong> <span th:text="${perfil.nombreUsuario}"></span></div>
+        <div class="profile-item" th:if="${tipoUsuario == 'Aspirante' and not #strings.isEmpty(perfil.habilidades)}"><strong>Habilidades:</strong> <span th:text="${perfil.habilidades}"></span></div>
+        <div class="profile-item"><strong>Correo:</strong> <span th:text="${perfil.correo}"></span></div>
+        <div class="profile-item"><strong>Tipo:</strong> <span th:text="${tipoUsuario}"></span></div>
+    </div>
+
+    <div class="actions-section">
+        <th:block th:if="${tipoUsuario == 'Aspirante'}">
+            <a th:href="@{/vacantes}" class="btn">🔎 Buscar Vacantes</a>
+            <a th:href="@{/vacantes/mis-postulaciones}" class="btn">📄 Ver Mis Postulaciones</a>
+        </th:block>
+
+        <th:block th:if="${tipoUsuario == 'Empleador'}">
+            <a th:href="@{/vacantes/nueva}" class="btn">➕ Publicar Nueva Vacante</a>
+            <a th:href="@{/vacantes/mis-vacantes}" class="btn">📋 Gestionar Mis Vacantes</a>
+        </th:block>
+    </div>
+</div>
+
+</body>
+</html>

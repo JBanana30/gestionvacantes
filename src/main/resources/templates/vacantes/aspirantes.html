@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/springsecurity6">
+<head>
+    <title>Aspirantes</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style th:replace="~{fragments/navbar :: nav-styles}"></style>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+        :root {
+            --primary-color: #00a4a4;
+            --background-color: #16161a;
+            --container-background: #242629;
+            --text-color: #fffffe;
+            --header-color: #1e1f22;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            padding-top: 80px; /* 60px navbar + 20px padding */
+        }
+        .container { background-color: var(--container-background); padding: 40px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); width: 100%; max-width: 1100px; margin: 20px auto; }
+        h1, h2 { text-align: center; color: var(--primary-color); }
+        h2 { font-weight: 300; color: #94a1b2; margin-top: 0; }
+        table { width: 100%; border-collapse: collapse; margin-top: 30px; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #3d3d3d; vertical-align: middle; }
+        thead { background-color: var(--header-color); }
+        th { font-weight: 600; }
+        tbody tr:hover { background-color: #2a2c2f; }
+        a { color: var(--primary-color); text-decoration: none; font-weight: 600; }
+        a:hover { text-decoration: underline; }
+        .fila-aceptado { background-color: rgba(44, 182, 125, 0.2) !important; border-left: 5px solid #2cb67d; }
+        .fila-rechazado { background-color: rgba(255, 92, 92, 0.2) !important; border-left: 5px solid #ff5c5c; color: #94a1b2; }
+        .actions-cell { white-space: nowrap; }
+        .actions-cell a, .actions-cell form, .actions-cell span { display: inline-block; margin-left: 10px; vertical-align: middle;}
+        .actions-cell a { margin-left: 0;}
+        .actions-cell span { margin-left: 0; color: #94a1b2; font-style: italic;} /* Estilo para "Sin CV" */
+        .btn-accion { padding: 5px 10px; border-radius: 5px; color: white; border: none; cursor: pointer; font-weight: 600; font-size: 0.9em;}
+        .btn-aceptar { background-color: #2cb67d; }
+        .btn-rechazar { background-color: #ff5c5c; }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{fragments/navbar :: nav}"></div>
+
+<div class="container">
+    <h2>Aspirantes para la vacante:</h2>
+    <h1 th:text="${vacante.titulo}">Título de la Vacante</h1>
+    <table>
+        <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Habilidades</th> <th>Estado</th>
+            <th>Fecha Postulación</th>
+            <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="post : ${postulaciones}" th:classappend="${post.estado.name() == 'ACEPTADO' ? 'fila-aceptado' : (post.estado.name() == 'RECHAZADO' ? 'fila-rechazado' : '')}">
+            <td th:text="${post.aspirante.nombreCompleto}"></td>
+            <td th:text="${post.aspirante.habilidades}"></td> <td th:text="${post.estado}"></td>
+            <td th:text="${#temporals.format(post.fechaPostulacion, 'dd-MM-yyyy HH:mm')}"></td>
+            <td class="actions-cell">
+
+                <a th:if="${post.cvPath != null}" th:href="@{/uploads/cvs/{file}(file=${post.cvPath})}" target="_blank">Ver CV</a>
+
+                <span th:if="${post.cvPath == null}">Sin CV</span>
+
+                <form th:if="${post.estado.name() != 'ACEPTADO'}" th:action="@{/vacantes/postulaciones/{id}/estado(id=${post.id})}" method="post">
+                    <input type="hidden" name="estado" value="ACEPTADO" />
+                    <button type="submit" class.="btn-accion btn-aceptar">Aceptar</button>
+                </form>
+                <form th:if="${post.estado.name() != 'RECHAZADO'}" th:action="@{/vacantes/postulaciones/{id}/estado(id=${post.id})}" method="post">
+                    <input type="hidden" name="estado" value="RECHAZADO" />
+                    <button type="submit" class="btn-accion btn-rechazar">Rechazar</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

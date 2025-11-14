@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Formulario de Usuarios</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+        :root {
+            --primary-color: #00a4a4;
+            --background-color: #2a2a2a;
+            --form-background: #333;
+            --text-color: #f4f4f4;
+            --error-color: #ff4136;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: var(--form-background);
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 800px; /* Ancho ajustado para la tabla */
+            text-align: center;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 25px;
+            font-weight: 600;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #444;
+            text-align: left;
+        }
+
+        th {
+            background-color: #2a2a2a;
+        }
+
+        .btn {
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+            margin: 0 5px;
+            display: inline-block;
+        }
+
+        .btn-primary { background-color: var(--primary-color); }
+        .btn-logout { background-color: var(--error-color); }
+        .action-links a {
+            color: var(--primary-color);
+            text-decoration: none;
+            margin-right: 10px;
+        }
+        .action-links a.delete { color: var(--error-color); }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>Gestión de Usuarios</h1>
+        <div>
+            <a th:href="@{/usuarios/nuevo}" class="btn btn-primary">Agregar Usuario</a>
+            <form th:action="@{/logout}" method="post" style="display:inline;">
+                <button type="submit" class="btn btn-logout">Cerrar Sesión</button>
+            </form>
+        </div>
+    </div>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Nombre de Usuario</th>
+            <th>Correo</th>
+            <th>Nombre Completo</th>
+            <th>Tipo</th>
+            <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="usuario : ${usuarios}">
+            <td th:text="${usuario.nombreUsuario}">nombre</td>
+            <td th:text="${usuario.correo}">correo</td>
+            <td th:text="${usuario.nombreCompleto}">nombre completo</td>
+            <td th:text="${usuario.tipo}">tipo</td>
+            <td class="action-links">
+                <a th:href="@{/usuarios/editar/{id}(id=${usuario.id})}">Editar</a>
+                <a th:href="@{/usuarios/eliminar/{id}(id=${usuario.id})}"
+                   onclick="return confirm('¿Seguro que deseas eliminar este usuario?')"
+                   class="delete">Eliminar</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

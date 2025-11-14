@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Empleador</title>
+    <style>
+        /* ... (tu CSS existente, no cambia) ... */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+        :root {
+            --primary-color: #00a4a4;
+            --background-color: #2a2a2a;
+            --form-background: #333;
+            --text-color: #f4f4f4;
+            --error-color: #ff4136;
+        }
+        body { font-family: 'Poppins', sans-serif; background-color: var(--background-color); color: var(--text-color); margin: 0; height: 100vh; overflow: hidden; }
+        .register-wrapper { display: flex; height: 100vh; }
+        .image-container { flex: 1; background-image: url('https://images.unsplash.com/photo-1556740738-b6a63e27c4df?q=80&w=2070&auto=format&fit=crophttps://cdn.prod.website-files.com/627cdcca8bc0d22df9b2672f/63e1f052d57f9c4e043c8350_Contract%20To%20Hire.webp'); background-size: cover; background-position: center; }
+        .form-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 40px; background-color: var(--background-color); }
+        .form-content { width: 100%; max-width: 400px; text-align: center; }
+        h1 { color: var(--primary-color); margin-bottom: 25px; font-weight: 600; }
+        .input-group { position: relative; margin-bottom: 25px; }
+        .input-field { width: 100%; padding: 10px 0; background: transparent; border: none; border-bottom: 2px solid var(--text-color); outline: none; color: var(--text-color); font-size: 16px; }
+        .input-label { position: absolute; top: 10px; left: 5px; color: rgba(255, 255, 255, 0.7); transition: .3s; pointer-events: none; }
+        .input-field:focus ~ .input-label, .input-field:valid ~ .input-label { top: -15px; font-size: 12px; color: var(--primary-color); }
+        .submit-btn { background-color: var(--primary-color); color: white; padding: 12px 20px; border: none; border-radius: 25px; cursor: pointer; width: 100%; font-size: 16px; font-weight: 600; transition: transform 0.2s; }
+        .submit-btn:hover { transform: scale(1.05); }
+        .login-link, .switch-role { margin-top: 20px; font-size: 14px; }
+        .login-link a { color: var(--primary-color); text-decoration: none; }
+        .switch-role a { color: #aaa; text-decoration: underline; }
+
+        /* Estilo para el nuevo error */
+        .alert { padding: 15px; margin-bottom: 20px; border-radius: 5px; color: white; background-color: var(--error-color); text-align: left;}
+
+        @media (max-width: 768px) { .image-container { display: none; } .form-container { flex-basis: 100%; } }
+    </style>
+</head>
+<body>
+<div class="register-wrapper">
+    <div class="image-container"></div>
+    <div class="form-container">
+        <div class="form-content">
+            <h1>Crear Cuenta de Empleador</h1>
+
+            <div th:if="${error_correo}" class="alert" th:text="${error_correo}"></div>
+
+            <form th:action="@{/registro/empleador}" method="post">
+                <div class="input-group">
+                    <input type="text" id="nombreCompleto" name="nombreCompleto" class="input-field" required>
+                    <label for="nombreCompleto" class="input-label">Nombre del Reclutador</label>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="empresa" name="empresa" class="input-field" required>
+                    <label for="empresa" class="input-label">Nombre de la Empresa</label>
+                </div>
+
+                <div class="input-group">
+                    <input type="email" id="correo" name="correo" class="input-field" required>
+                    <label for="correo" class="input-label">Correo Electrónico</label>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="password" name="password" class="input-field" required>
+                    <label for="password" class="input-label">Contraseña</label>
+                </div>
+                <button type="submit" class="submit-btn">Registrarse como Empleador</button>
+                <div class="login-link">¿Ya tienes una cuenta? <a th:href="@{/login}">Inicia Sesión</a></div>
+                <div class="switch-role"><a th:href="@{/registro/aspirante}">O registrarse como Aspirante</a></div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

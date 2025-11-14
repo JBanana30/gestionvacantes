@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+        :root {
+            --primary-color: #00a4a4;
+            --background-color: #2a2a2a;
+            --form-background: #333;
+            --text-color: #f4f4f4;
+            --error-color: #ff4136;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            height: 100vh;
+            overflow: hidden; /* Evita el scroll */
+        }
+
+        .login-wrapper {
+            display: flex;
+            height: 100vh;
+        }
+
+        .form-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            background-color: var(--background-color);
+        }
+
+        .form-content {
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .image-container {
+            flex: 1;
+            background-image: url('https://gerente.com/co/wp-content/uploads/sites/16/2017/08/felices-empleados--scaled.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 25px;
+            font-weight: 600;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 10px 0;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid var(--text-color);
+            outline: none;
+            color: var(--text-color);
+            font-size: 16px;
+        }
+
+        .input-label {
+            position: absolute;
+            top: 10px;
+            left: 5px;
+            color: rgba(255, 255, 255, 0.7);
+            transition: .3s;
+            pointer-events: none;
+        }
+
+        .input-field:focus ~ .input-label,
+        .input-field:valid ~ .input-label {
+            top: -15px;
+            font-size: 12px;
+            color: var(--primary-color);
+        }
+
+        .submit-btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+
+        .submit-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .register-link, .role-selection {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .register-link a, .role-selection a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            color: white;
+            text-align: left;
+        }
+        .alert-danger { background-color: var(--error-color); }
+        .alert-success { background-color: #28a745; }
+        .alert-info { background-color: #17a2b8; }
+
+        /* Media Query para pantallas pequeñas */
+        @media (max-width: 768px) {
+            .image-container {
+                display: none; /* Oculta la imagen */
+            }
+            .form-container {
+                flex-basis: 100%; /* El formulario ocupa todo el ancho */
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="login-wrapper">
+    <div class="form-container">
+        <div class="form-content">
+            <h1>Iniciar Sesión</h1>
+
+            <div th:if="${param.error}" class="alert alert-danger">
+                ❌ Correo o contraseña incorrectos. Por favor, inténtalo de nuevo.
+            </div>
+
+            <div th:if="${param.registroExitoso}" class="alert alert-success">
+                ✅ ¡Tu cuenta ha sido creada con éxito! Ya puedes iniciar sesión.
+            </div>
+
+            <div th:if="${param.logout}" class="alert alert-info">
+                🔒 Has cerrado sesión correctamente.
+            </div>
+
+            <form th:action="@{/login}" method="post">
+                <div class="input-group">
+                    <input type="email" id="username" name="username" class="input-field" required>
+                    <label for="username" class="input-label">Correo Electrónico</label>
+                </div>
+
+                <div class="input-group">
+                    <input type="password" id="password" name="password" class="input-field" required>
+                    <label for="password" class="input-label">Contraseña</label>
+                </div>
+
+                <button type="submit" class="submit-btn">Entrar</button>
+
+                <div class="register-link">
+                    ¿No tienes una cuenta?
+                    <a th:href="@{/registro/aspirante}">Regístrate como Aspirante</a>
+                </div>
+
+                <div class="role-selection">
+                    o
+                    <a th:href="@{/registro/empleador}">Regístrate como Empleador</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="image-container">
+    </div>
+</div>
+</body>
+</html>

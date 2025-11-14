@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/springsecurity6">
+<head>
+    <title>Mis Postulaciones</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style th:replace="~{fragments/navbar :: nav-styles}"></style>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+         :root {
+             --primary-color: #00a4a4;
+             --background-color: #1a1a1d;
+             --container-background: #2c2f33;
+             --card-background: #36393f;
+             --text-color: #f4f4f4;
+             --text-muted: #99aab5;
+             --success-color: #2cb67d;
+             --danger-color: #ff5c5c;
+             --pending-color: #f5a623;
+             --border-radius: 8px;
+             --box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+         }
+
+         /* 3. Añadimos padding-top */
+         body {
+             font-family: 'Poppins', sans-serif;
+             background-color: var(--background-color);
+             color: var(--text-color);
+             margin: 0;
+             padding: 40px;
+             padding-top: 100px; /* 60px navbar + 40px padding */
+             min-height: 100vh;
+             box-sizing: border-box;
+         }
+         .container {
+             background-color: var(--container-background);
+             padding: 40px;
+             border-radius: var(--border-radius);
+             box-shadow: var(--box-shadow);
+             width: 100%;
+             max-width: 960px;
+             margin: 20px auto;
+         }
+         h1 {
+             color: var(--primary-color);
+             text-align: center;
+             border-bottom: 1px solid var(--primary-color);
+             padding-bottom: 15px;
+             margin-top: 0;
+             margin-bottom: 30px;
+             font-weight: 600;
+         }
+         .card {
+             background-color: var(--card-background);
+             padding: 25px;
+             border-radius: var(--border-radius);
+             margin-bottom: 25px;
+             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+         }
+         .card h2 {
+             color: var(--primary-color);
+             margin-top: 0;
+             margin-bottom: 15px;
+             font-size: 1.6em;
+             font-weight: 600;
+         }
+         .card p { margin: 10px 0; line-height: 1.6; }
+         .card strong { color: var(--text-muted); }
+         .status-badge {
+             padding: 6px 14px; border-radius: 20px; color: white;
+             font-weight: 600; font-size: 0.9em; display: inline-block;
+             text-transform: uppercase; letter-spacing: 0.5px;
+         }
+         .status-ACEPTADO { background-color: var(--success-color); }
+         .status-RECHAZADO { background-color: var(--danger-color); }
+         .status-PENDIENTE { background-color: var(--pending-color); }
+         .card-actions {
+              margin-top: 25px; padding-top: 20px;
+              border-top: 1px solid #4f545c;
+              display: flex; gap: 15px;
+         }
+         .btn {
+             background-color: var(--primary-color); color: white; padding: 10px 20px;
+             border: none; border-radius: 25px; cursor: pointer; font-size: 0.95em;
+             font-weight: 600; text-decoration: none; display: inline-block;
+             transition: transform 0.2s, background-color 0.2s;
+             text-align: center;
+         }
+         .btn:hover { transform: translateY(-2px); background-color: #008a8a; }
+         .btn-secondary { background-color: #7289da; }
+         .btn-secondary:hover { background-color: #5f73bc; }
+         .btn-disabled {
+             background-color: #99aab5; cursor: not-allowed; opacity: 0.6;
+         }
+         .btn-disabled:hover {
+             transform: none; background-color: #99aab5;
+         }
+          .empty-message {
+              text-align: center; font-size: 1.2em;
+              color: var(--text-muted); padding: 40px 0;
+          }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{fragments/navbar :: nav}"></div>
+
+<div class="container">
+    <h1>Mis Postulaciones</h1>
+
+    <div th:if="${#lists.isEmpty(postulaciones)}">
+        <p class="empty-message">Aún no te has postulado a ninguna vacante.</p>
+    </div>
+
+    <div th:each="post : ${postulaciones}" class="card">
+        <h2 th:text="${post.vacante.titulo}">Título de la Vacante</h2>
+        <p><strong>Empresa:</strong> <span th:text="${post.vacante.empleador.empresa}"></span></p>
+        <p><strong>Ubicación:</strong> <span th:text="${post.vacante.ubicacion}"></span></p>
+        <p>
+            <strong>Estado:</strong>
+            <span th:text="${post.estado}"
+                  th:classappend="'status-badge status-' + ${post.estado.name()}">
+            </span>
+        </p>
+        <p th:if="${post.aspirante.habilidades}">
+            <strong>Tus Habilidades (registradas):</strong> <span th:text="${post.aspirante.habilidades}"></span>
+        </p>
+        <div class="card-actions">
+            <button class="btn btn-disabled" disabled>✏️ Editar CV</button>
+            <button class="btn btn-disabled" disabled>❌ Demitir</button>
+        </div>
+    </div>
+</div>
+</body>
+</html>
